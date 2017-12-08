@@ -5,6 +5,7 @@ from author.form import RegisterForm, LoginForm
 from author.models import Author
 import bcrypt
 
+
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     form = LoginForm()
@@ -14,11 +15,12 @@ def login():
         session['next'] = request.args.get('next', None)
 
     if form.validate_on_submit():
-        # looking for author who has entered username and password
+        # looking for author in database with the same username as entered in the form
         author = Author.query.filter_by(
             username=form.username.data
-        ).first() # return first author
+        ).first()  # return first author
 
+        # to check password
         if author:
             if bcrypt.hashpw(form.password.data, author.password) == author.password:
                 session["username"] = form.username.data  # storing username in the session
@@ -57,5 +59,5 @@ def login_success():
 
 @app.route('/logout')
 def logout():
-    session.pop('username')
+    session.pop('username') # logging out and removing username from session
     return redirect(url_for('index'))
