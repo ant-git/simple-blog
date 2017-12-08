@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from __init__ import db
 
@@ -16,6 +16,7 @@ class Blog(db.Model):
     def __repr__(self):
         return "<Blog %r>" % self.name
 
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     blog_id = db.Column(db.Integer, db.ForeignKey('blog.id'))
@@ -24,15 +25,15 @@ class Post(db.Model):
     body = db.Column(db.Text)
     slug = db.Column(db.String(256), unique=True)
     publish_date = db.Column(db.DateTime)
-    live = db.Column(db.Boolean) # to avoid deleting post. If false -> just hide it
+    live = db.Column(db.Boolean)  # to avoid deleting post. If false -> just hide it
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
     def __init__(self, blog, author, title, body, category, slug=None, publish_date=None, live=True):
         self.blog_id = blog.id
-        self.blog_id = author.id
+        self.author_id = author.id
         self.title = title
         self.body = body
-        self.category = category
+        self.category_id = category.id
         self.slug = slug
         if publish_date is None:
             self.publish_date = datetime.utcnow()
@@ -40,9 +41,9 @@ class Post(db.Model):
             self.publish_date = publish_date
         self.live = live
 
-
     def __repr__(self):
         return '<Post %r>' % self.title
+
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
