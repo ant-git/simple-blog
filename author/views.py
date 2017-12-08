@@ -1,6 +1,7 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, session
 from __init__ import app
 from author.form import RegisterForm, LoginForm
+from author.models import Author
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -9,8 +10,14 @@ def login():
     error = ''
     if form.validate_on_submit():
         # looking for author who has entered username and password
-        
-        pass
+        author = Author.query.filter_by(
+            username=form.username.data,
+            password=form.password.data
+        ).limit(1)
+
+        if author.count():
+            session["username"] = form.username.data # stroing username in the session
+            return redirect(url_for('login_success'))
     return render_template('author/login.html', form=form, error=error)
 
 
@@ -25,3 +32,7 @@ def register():
 @app.route('/success')
 def success():
     return "Author Registered!"
+
+@app.route('/login_success')
+def login_success():
+    return "Author logged in!"
