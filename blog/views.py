@@ -70,6 +70,7 @@ def post():
     form = PostForm()
     if form.validate_on_submit():
         if form.new_category.data:
+            # creating new category
             new_category = Category(form.new_category.data)
             db.session.add(new_category)
             db.session.flush()
@@ -79,6 +80,7 @@ def post():
             category = Category.query.filter_by(id=category_id).first()
         else:
             category = None
+        # forming blog post and adding it to database
         blog = Blog.query.first()
         author = Author.query.filter_by(username=session['username']).first()
         title = form.title.data
@@ -87,10 +89,11 @@ def post():
         post = Post(blog, author, title, body, category, slug)
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('admin'))
+        return redirect(url_for('article', slug=slug))
     return render_template('blog/post.html', form=form)
 
 
-@app.route('/article')
-def article():
-    return render_template('blog/article.html')
+@app.route('/article/<slug>')
+def article(slug):
+    post = Post.query.filter_by(slug=slug).first_or_404()
+    return render_template('blog/article.html', post=post)
