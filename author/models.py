@@ -20,4 +20,4 @@ class Author(db.Model):
 
     # for fetching records while working in shell
     def __repr__(self):
-        return '<Author %r>' % self.username
+        return self.username
