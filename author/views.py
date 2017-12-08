@@ -15,14 +15,14 @@ def login():
 
     if form.validate_on_submit():
         # looking for author who has entered username and password
-        authors = Author.query.filter_by(
+        author = Author.query.filter_by(
             username=form.username.data
-        ).limit(1)
+        ).first() # return first author
 
-        if authors.count():
-            author = authors[0]
+        if author:
             if bcrypt.hashpw(form.password.data, author.password) == author.password:
                 session["username"] = form.username.data  # storing username in the session
+                session["is_author"] = author.is_author
                 if 'next' in session:
                     next = session.get('next')
                     session.pop('next')
