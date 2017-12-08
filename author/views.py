@@ -60,4 +60,5 @@ def login_success():
 @app.route('/logout')
 def logout():
     session.pop('username') # logging out and removing username from session
+    session.pop('is_author')
     return redirect(url_for('index'))
