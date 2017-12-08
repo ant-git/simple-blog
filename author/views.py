@@ -3,7 +3,7 @@ from __init__ import app
 from author.decorators import login_required
 from author.form import RegisterForm, LoginForm
 from author.models import Author
-
+import bcrypt
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
@@ -15,19 +15,22 @@ def login():
 
     if form.validate_on_submit():
         # looking for author who has entered username and password
-        author = Author.query.filter_by(
-            username=form.username.data,
-            password=form.password.data
+        authors = Author.query.filter_by(
+            username=form.username.data
         ).limit(1)
 
-        if author.count():
-            session["username"] = form.username.data  # storing username in the session
-            if 'next' in session:
-                next = session.get('next')
-                session.pop('next')
-                return redirect(next)
+        if authors.count():
+            author = authors[0]
+            if bcrypt.hashpw(form.password.data, author.password) == author.password:
+                session["username"] = form.username.data  # storing username in the session
+                if 'next' in session:
+                    next = session.get('next')
+                    session.pop('next')
+                    return redirect(next)
+                else:
+                    return redirect(url_for('login_success'))
             else:
-                return redirect(url_for('login_success'))
+                error = "Incorrect username and password"
         else:
             error = "Incorrect username and password"
     return render_template('author/login.html', form=form, error=error)
@@ -51,3 +54,8 @@ def success():
 def login_success():
     return "Author logged in!"
 
+
+@app.route('/logout')
+def logout():
+    session.pop('username')
+    return redirect(url_for('index'))
