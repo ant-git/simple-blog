@@ -27,7 +27,7 @@ class Post(db.Model):
     live = db.Column(db.Boolean) # to avoid deleting post. If false -> just hide it
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
-    def __init__(self, blog, author, title, body, category, slug=None, publish_date=None, live=True)
+    def __init__(self, blog, author, title, body, category, slug=None, publish_date=None, live=True):
         self.blog_id = blog.id
         self.blog_id = author.id
         self.title = title
