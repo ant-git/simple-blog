@@ -1,4 +1,4 @@
-from flask import render_template, redirect
+from flask import render_template, redirect, url_for
 from __init__ import app
 from author.form import RegisterForm
 
@@ -7,7 +7,16 @@ from author.form import RegisterForm
 def login():
     return "Hello user!"
 
+
 @app.route('/register', methods=('GET', 'POST'))
 def register():
     form = RegisterForm()
+    if form.validate_on_submit():
+        return redirect(url_for('success'))
     return render_template('author/register.html', form=form)
+
+
+@app.route('/success')
+def success():
+    return "Author Registered!"
+
