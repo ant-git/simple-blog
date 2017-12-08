@@ -1,6 +1,5 @@
 from __init__ import db
 
-
 # Module class for Author
 class Author(db.Model):
     # columns for Author
