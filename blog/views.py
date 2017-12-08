@@ -53,5 +53,4 @@ def setup():
         else:
             db.session.rollback()
             error = "Error Creating Blog"
-
     return render_template('blog/setup.html', form=form)
