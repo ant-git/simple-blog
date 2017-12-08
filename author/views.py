@@ -1,11 +1,17 @@
 from flask import render_template, redirect, url_for
 from __init__ import app
-from author.form import RegisterForm
+from author.form import RegisterForm, LoginForm
 
 
-@app.route('/login')
+@app.route('/login', methods=('GET', 'POST'))
 def login():
-    return "Hello user!"
+    form = LoginForm()
+    error = ''
+    if form.validate_on_submit():
+        # looking for author who has entered username and password
+        
+        pass
+    return render_template('author/login.html', form=form, error=error)
 
 
 @app.route('/register', methods=('GET', 'POST'))
@@ -19,4 +25,3 @@ def register():
 @app.route('/success')
 def success():
     return "Author Registered!"
-
