@@ -1,9 +1,10 @@
+import bcrypt
 from flask import render_template, redirect, url_for, session, request
 from __init__ import app
 from author.decorators import login_required
 from author.form import RegisterForm, LoginForm
 from author.models import Author
-import bcrypt
+
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -22,7 +23,7 @@ def login():
 
         # to check password
         if author:
-            if bcrypt.hashpw(form.password.data, author.password) == author.password:
+            if bcrypt.checkpw(form.password.data.encode('utf8'), author.password.encode('utf8')):
                 session["username"] = form.username.data  # storing username in the session
                 session["is_author"] = author.is_author
                 if 'next' in session:
