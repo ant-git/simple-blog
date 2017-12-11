@@ -9,7 +9,7 @@ from blog.models import Blog, Category, Post
 from author.decorators import login_required, author_required
 import bcrypt
 
-POST_PER_PAGE = 5
+POST_PER_PAGE = 3
 
 @app.route('/')
 @app.route('/index')
@@ -26,9 +26,9 @@ def index(page=1):
 @app.route('/admin/<int:page>')
 @author_required
 @login_required
-def admin():
+def admin(page=1):
     if session.get('is_author'):
-        posts = Post.query.order_by(Post.publish_date.desc())
+        posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, POST_PER_PAGE, False)
         return render_template('blog/admin.html', posts=posts)
     else:
         abort(403)
