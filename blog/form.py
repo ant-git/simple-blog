@@ -4,7 +4,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 from author.form import RegisterForm
 from blog.models import Category
-
+from flask_wtf.file import  FileField, FileAllowed
 
 class SetupForm(RegisterForm):
     name = StringField('Blog name', [
@@ -19,6 +19,9 @@ def categories():
 
 
 class PostForm(Form):
+    image = FileField('Image', validators=[
+        FileAllowed(['jpg', 'png', 'gif'], 'Images only!')
+    ])
     title = StringField('Title', [
         validators.DataRequired(),
         validators.Length(max=80)
