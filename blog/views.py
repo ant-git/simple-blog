@@ -105,7 +105,7 @@ def post():
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('article', slug=slug))
-    return render_template('blog/post.html', form=form)
+    return render_template('blog/post.html', form=form, action="new")
 
 
 @app.route('/article/<slug>')
@@ -124,6 +124,28 @@ def delete(post_id):
     return redirect('/admin')
 
 
-@app.route('/edit')
-def edit():
-    pass
+@app.route('/edit/<int:post_id>', methods=('GET', 'POST'))
+def edit(post_id):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    form = PostForm(obj=post)  # assigning all the fields of post to form
+    if form.validate_on_submit():
+        original_image = post.image
+        form.populate_obj(post)
+        if form.image.has_file():
+            image = request.files.get('image')
+            try:
+                filename = uploaded_images.save(image)
+            except:
+                flash("The image was not uploaded")
+            if filename:
+                post.image = filename
+        else:
+            post.image = original_image  # if user hasnt changed image - keep image
+        if form.new_category.data:
+            new_category = Category(form.new_category.data)
+            db.session.add(new_category)
+            db.session.flush()
+            post.category = new_category
+        db.session.commit()
+        return redirect(url_for('article', slug=post.slug))
+    return render_template('blog/post.html', form=form, post=post, action="edit")
