@@ -23,8 +23,11 @@ def index():
 @author_required
 @login_required
 def admin():
-    return render_template('blog/admin.html')
-
+    if session.get('is_author'):
+        posts = Post.query.order_by(Post.publish_date.desc())
+        return render_template('blog/admin.html', posts=posts)
+    else:
+        pass
 
 @app.route('/setup', methods=('GET', 'POST'))
 def setup():

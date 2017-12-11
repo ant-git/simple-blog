@@ -22,3 +22,4 @@ def author_required(f):
         return f(*args, **kwargs)
 
     return decorator_function
+
