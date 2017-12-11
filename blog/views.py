@@ -9,18 +9,21 @@ from blog.models import Blog, Category, Post
 from author.decorators import login_required, author_required
 import bcrypt
 
+POST_PER_PAGE = 5
 
 @app.route('/')
 @app.route('/index')
-def index():
+@app.route('/index/<int:page>')
+def index(page=1):
     blog = Blog.query.first()
     if not blog:
         return redirect(url_for('setup'))
-    posts = Post.query.order_by(Post.publish_date.desc())
+    posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, POST_PER_PAGE, False)
     return render_template('blog/index.html', blog=blog, posts=posts)
 
 
 @app.route('/admin')
+@app.route('/admin/<int:page>')
 @author_required
 @login_required
 def admin():

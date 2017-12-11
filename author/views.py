@@ -52,6 +52,7 @@ def success():
     return "Author Registered!"
 
 
+
 @app.route('/logout')
 def logout():
     session.pop('username') # logging out and removing username from session
