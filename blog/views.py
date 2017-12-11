@@ -13,10 +13,11 @@ import bcrypt
 @app.route('/')
 @app.route('/index')
 def index():
-    blogs = Blog.query.count()
-    if blogs == 0:
+    blog = Blog.query.first()
+    if not blog:
         return redirect(url_for('setup'))
-    return "Hello World!"
+    posts = Post.query.order_by(Post.publish_date.desc())
+    return render_template('blog/index.html', blog=blog, posts=posts)
 
 
 @app.route('/admin')
@@ -27,7 +28,8 @@ def admin():
         posts = Post.query.order_by(Post.publish_date.desc())
         return render_template('blog/admin.html', posts=posts)
     else:
-        pass
+        abort(403)
+
 
 @app.route('/setup', methods=('GET', 'POST'))
 def setup():
