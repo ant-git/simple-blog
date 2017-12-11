@@ -42,7 +42,7 @@ def setup():
     # taking data from form and adding that data it to the table
     if form.validate_on_submit():
         salt = bcrypt.gensalt()  # generating salt
-        hashed_password = bcrypt.hashpw(form.password.data, salt)
+        hashed_password = bcrypt.hashpw(form.password.data.encode('utf8'), salt)
         author = Author(
             form.fullname.data,
             form.email.data,
