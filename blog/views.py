@@ -9,7 +9,8 @@ from blog.models import Blog, Category, Post
 from author.decorators import login_required, author_required
 import bcrypt
 
-POST_PER_PAGE = 3
+POST_PER_PAGE = 5
+
 
 @app.route('/')
 @app.route('/index')
@@ -18,7 +19,7 @@ def index(page=1):
     blog = Blog.query.first()
     if not blog:
         return redirect(url_for('setup'))
-    posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, POST_PER_PAGE, False)
+    posts = Post.query.filter_by(live=True).order_by(Post.publish_date.desc()).paginate(page, POST_PER_PAGE, False)
     return render_template('blog/index.html', blog=blog, posts=posts)
 
 
@@ -111,3 +112,18 @@ def post():
 def article(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
     return render_template('blog/article.html', post=post)
+
+
+@app.route('/delete/<int:post_id>')
+@author_required
+def delete(post_id):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    post.live = False
+    db.session.commit()
+    flash("Article deleted")
+    return redirect('/admin')
+
+
+@app.route('/edit')
+def edit():
+    pass
